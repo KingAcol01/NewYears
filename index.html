@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy New Year 2026</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* KONTEN TENGAH */
+        .main-content {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            width: 90%;
+            pointer-events: none;
+        }
+
+        h1 {
+            color: white;
+            font-size: clamp(2rem, 8vw, 4rem);
+            margin: 0;
+            letter-spacing: 5px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .year {
+            font-size: clamp(3.5rem, 15vw, 7rem);
+            font-weight: 900;
+            margin: -10px 0 10px 0;
+            background: linear-gradient(to right, #f1c40f, #e67e22, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+
+        /* Ucapan di bawah tahun */
+        .sub-wish {
+            color: #ecf0f1;
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            font-style: italic;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* TOMBOL TENGAH BAWAH */
+        .footer-section {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn-celebrate {
+            background: linear-gradient(45deg, #ff0043, #ffbd39);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 0, 67, 0.4);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-celebrate:hover {
+            transform: scale(1.1);
+        }
+        
+        .btn-celebrate:active {
+            transform: scale(0.9);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="fireworks"></canvas>
+
+    <div class="main-content">
+        <h1>HAPPY NEW YEAR</h1>
+        <span class="year">2026</span>
+        <p class="sub-wish">
+            Happy New Year 2026!<br>
+            New year, new hope, new memories.
+        </p>
+    </div>
+
+    <div class="footer-section">
+        <button class="btn-celebrate" onclick="explodeMore()">Click! ✨</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('fireworks');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 10,
+                    y: (Math.random() - 0.5) * 10
+                };
+                this.alpha = 1;
+                this.friction = 0.95;
+            }
+            draw() {
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2.5, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+            update() {
+                this.velocity.x *= this.friction;
+                this.velocity.y *= this.friction;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= 0.012;
+            }
+        }
+
+        function firework(x, y) {
+            const colors = ['#ff0043', '#14ffec', '#ffbd39', '#54e346', '#ffffff'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            for (let i = 0; i < 50; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((p, i) => {
+                if (p.alpha > 0) {
+                    p.update(); p.draw();
+                } else {
+                    particles.splice(i, 1);
+                }
+            });
+
+            if (Math.random() < 0.05) {
+                firework(Math.random() * canvas.width, Math.random() * canvas.height * 0.7);
+            }
+        }
+
+        function explodeMore() {
+            for(let i=0; i<10; i++) {
+                setTimeout(() => {
+                    firework(Math.random() * canvas.width, Math.random() * canvas.height * 0.6);
+                }, i * 100);
+            }
+        }
+
+        animate();
+    </script>
+</body>
+</html>
